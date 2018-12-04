@@ -1,5 +1,6 @@
 package com.negativ.javabasics.Fragments;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.negativ.javabasics.Card;
+import com.negativ.javabasics.MainActivity;
 import com.negativ.javabasics.R;
 import com.negativ.javabasics.RVAdapter;
 
@@ -41,6 +43,16 @@ public class RecyclerViewFragment extends Fragment {
 
         RVAdapter adapter = new RVAdapter(cards, getContext());
         rv.setAdapter(adapter);
+
+        String product = "";
+
+        Cursor cursor = MainActivity.mDb.rawQuery("SELECT * FROM clients", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            product += cursor.getString(1) + " | ";
+            cursor.moveToNext();
+        }
+        cursor.close();
 
         cards.add(new Card("Arrays"));
         cards.add(new Card("Arrays"));
