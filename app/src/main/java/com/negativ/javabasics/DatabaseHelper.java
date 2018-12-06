@@ -12,18 +12,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static String DB_NAME = "ReferenceBook";
+    private static String DB_NAME = "Data.db";
     private static String DB_PATH = "";
 
     public static int getDbVersion() {
         return DB_VERSION;
     }
 
-    public static void setDbVersion(int dbVersion) {
-        DB_VERSION = dbVersion;
-    }
+//    public static void setDbVersion(int dbVersion) {
+//        DB_VERSION = dbVersion;
+//    }
 
-    private static int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private SQLiteDatabase mDataBase;
     private final Context mContext;
