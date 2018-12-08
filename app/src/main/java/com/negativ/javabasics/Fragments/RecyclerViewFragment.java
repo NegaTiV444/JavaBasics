@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ public class RecyclerViewFragment extends Fragment {
 
     private List<Card> cards;
     RecyclerView rv;
+
+    public FragmentTransaction fragmentTransaction;
 
     private DatabaseHelper mDBHelper;
     private SQLiteDatabase mDb;
@@ -59,7 +62,23 @@ public class RecyclerViewFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rv.setLayoutManager(llm);
 
-        RVAdapter adapter = new RVAdapter(cards, getContext());
+        RVAdapter adapter = new RVAdapter(cards, getActivity());
+        adapter.setClickListener(new RVAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                // mDb.rawQuery("select * from topics where "+ "id=?",new String[]{"0"});
+                Cursor cursor = mDb.rawQuery("select * from topics where id = " + Integer.toString(position), null);
+                String header, data;
+                System.out.println("Test");
+                cursor.moveToFirst();
+                header = cursor.getString(cursor.getColumnIndex("header"));
+                data = cursor.getString(cursor.getColumnIndex("data"));
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frgmCont, TopicDataFragment.newInstance(header, data));
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
         rv.setAdapter(adapter);
         getDataFromDatabase("topics");
 
@@ -68,19 +87,17 @@ public class RecyclerViewFragment extends Fragment {
 //        cards.add(new Card("Arrays"));
 //        cards.add(new Card("Arrays"));
 //        cards.add(new Card("Arrays"));
-
         return view;
     }
 
     private void getDataFromDatabase(String tableName) {
         Cursor cursor = mDb.rawQuery("SELECT * FROM " + tableName, null);
         while (cursor.moveToNext()) {
-            String dbHeader = cursor.getString(cursor
-                    .getColumnIndex("header"));
-            String dbData = cursor.getString(cursor
-                    .getColumnIndex("data"));
+            String dbHeader = cursor.getString(cursor.getColumnIndex("header"));
+            String dbData = cursor.getString(cursor.getColumnIndex("data"));
             cards.add(new Card(dbHeader));
         }
         cursor.close();
     }
+
 }

@@ -19,6 +19,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
     private List<Card> cards;
     private LayoutInflater mInflater;
+    private ItemClickListener mClickListener;
 
     AdapterView.OnItemClickListener mItemClickListener;
 
@@ -44,13 +45,33 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
         return cards.size();
     }
 
-    public class CardViewHolder extends RecyclerView.ViewHolder{
+    public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView Header;
 
         public CardViewHolder(@NonNull View itemView) {
             super(itemView);
             Header = itemView.findViewById(R.id.header);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            if (mClickListener != null) {
+                mClickListener.onItemClick(v, getAdapterPosition());
+            }
+        }
+    }
+
+    public String getItemHeader(int id) {
+        return cards.get(id).getHeader();
+    }
+
+    public void setClickListener(ItemClickListener itemClickListener) {
+        this.mClickListener = itemClickListener;
+    }
+
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
     }
 }
